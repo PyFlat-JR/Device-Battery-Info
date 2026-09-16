@@ -1,0 +1,72 @@
+name: Bug report
+description: Something isn't working the way it should.
+title: "[Bug]: "
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report this. Please check open issues first to avoid a duplicate.
+
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: What did you do, what did you expect, and what happened instead?
+    validations:
+      required: true
+
+  - type: dropdown
+    id: device
+    attributes:
+      label: Which device/source is affected?
+      options:
+        - This PC (system battery)
+        - Android phone (adb)
+        - Windows Bluetooth device
+        - Other / catalog device (specify below)
+        - Widget rendering
+        - Config flow / setup
+        - Something else
+    validations:
+      required: true
+
+  - type: input
+    id: catalog-device
+    attributes:
+      label: If "Other / catalog device" above, which one?
+      description: >
+        GitHub issue forms can't hide this field unless it applies, so it's always shown - leave it
+        blank for anything else. Manufacturer and exact model, e.g. "Razer DeathAdder V3 Pro".
+      placeholder: e.g. Razer DeathAdder V3 Pro
+
+  - type: input
+    id: plugin-version
+    attributes:
+      label: Plugin version
+      description: The `version` shown for Device Battery Info in Macro Deck's plugin manager.
+      placeholder: e.g. 1.0.18
+    validations:
+      required: true
+
+  - type: input
+    id: macrodeck-version
+    attributes:
+      label: Macro Deck version
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant log output
+      description: >
+        Macro Deck's log viewer, filtered to this plugin, covering the time the problem occurred.
+        Redact anything sensitive (device names, adb addresses).
+      render: text
+
+  - type: textarea
+    id: extra
+    attributes:
+      label: Anything else?
+      description: OS version, hardware model, whether this ever worked, etc.

@@ -1,0 +1,48 @@
+name: Device support request
+description: Ask for a device you don't have time to add yourself.
+title: "[Device Request]: "
+labels: [device-request]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Device Battery Info only supports devices someone has implemented and tested against real hardware -
+        see [`docs/adding-a-device.md`](../../docs/adding-a-device.md). Filing a request is fine, but
+        it will most likely need a contributor who owns the device (maybe you!) to actually happen.
+
+  - type: input
+    id: device
+    attributes:
+      label: Device
+      description: Manufacturer and exact model.
+      placeholder: e.g. Logitech G Pro X Superlight 2
+    validations:
+      required: true
+
+  - type: dropdown
+    id: connection
+    attributes:
+      label: How does the plugin process reach it?
+      options:
+        - USB HID (wired or dongle)
+        - Bluetooth
+        - Bluetooth LE
+        - Something else / not sure
+    validations:
+      required: true
+
+  - type: textarea
+    id: protocol
+    attributes:
+      label: Battery protocol details, if you know any
+      description: >
+        Anything that helps: a vendor SDK, a reverse-engineering writeup, USB vendor/product id,
+        a Wireshark/USB capture, or how another tool (OpenRGB, a vendor app) reads the battery level.
+
+  - type: checkboxes
+    id: contribute
+    attributes:
+      label: Contribution
+      options:
+        - label: I own this device and am willing to help test a backend for it.
+        - label: I'd like to implement this myself and am opening this issue to track it.

@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+    <!-- The default-language file. Every translation is checked against it and the fallback chain ends
+       here, so it is required even for a plugin that ships one language. Add a language by adding
+       Localization/Strings.<culture>.resx beside it (Strings.de.resx, Strings.pt-BR.resx).
+       A dotted key becomes a nested class: Actions.Refresh.Name is Strings.Actions.Refresh.Name(). -->
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>2.0</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+
+    <data name="Actions.Refresh.Name" xml:space="preserve">
+        <value>Refresh battery levels</value>
+    </data>
+    <data name="Actions.Refresh.Description" xml:space="preserve">
+        <value>Polls every configured battery source now instead of waiting for the next interval.</value>
+    </data>
+
+    <data name="Variables.Percent.DisplayName" xml:space="preserve">
+        <value>{device} battery level</value>
+    </data>
+    <data name="Variables.Percent.Description" xml:space="preserve">
+        <value>Charge level of {device}, from 0 to 100.</value>
+    </data>
+    <data name="Variables.Status.DisplayName" xml:space="preserve">
+        <value>{device} battery status</value>
+    </data>
+    <data name="Variables.Status.Description" xml:space="preserve">
+        <value>One of unknown, discharging, charging or full for {device}.</value>
+    </data>
+    <data name="Variables.Charging.DisplayName" xml:space="preserve">
+        <value>{device} is charging</value>
+    </data>
+    <data name="Variables.Charging.Description" xml:space="preserve">
+        <value>True while {device} is charging.</value>
+    </data>
+    <data name="Variables.Online.DisplayName" xml:space="preserve">
+        <value>{device} battery reachable</value>
+    </data>
+    <data name="Variables.Online.Description" xml:space="preserve">
+        <value>True while {device} is returning a fresh reading.</value>
+    </data>
+    <data name="Variables.TimeToFull.DisplayName" xml:space="preserve">
+        <value>{device} time to full</value>
+    </data>
+    <data name="Variables.TimeToFull.Description" xml:space="preserve">
+        <value>Estimated time until {device} finishes charging, when the source reports it.</value>
+    </data>
+    <data name="Variables.Trend.DisplayName" xml:space="preserve">
+        <value>{device} battery trend</value>
+    </data>
+    <data name="Variables.Trend.Description" xml:space="preserve">
+        <value>How much {device}'s charge has moved recently, as a signed percentage over the window it covers, for example -13%/1h or +28%/30m. Empty until enough history has built up.</value>
+    </data>
+    <data name="Variables.TrendRate.DisplayName" xml:space="preserve">
+        <value>{device} battery rate</value>
+    </data>
+    <data name="Variables.TrendRate.Description" xml:space="preserve">
+        <value>Signed rate of change for {device} in percent per hour, normalized from the same recent window as the battery trend.</value>
+    </data>
+
+    <data name="Events.ChargingStarted.Name" xml:space="preserve">
+        <value>Charging started</value>
+    </data>
+    <data name="Events.ChargingStarted.Description" xml:space="preserve">
+        <value>A device started charging.</value>
+    </data>
+    <data name="Events.ChargingStopped.Name" xml:space="preserve">
+        <value>Charging stopped</value>
+    </data>
+    <data name="Events.ChargingStopped.Description" xml:space="preserve">
+        <value>A device stopped charging.</value>
+    </data>
+    <data name="Events.BatteryLow.Name" xml:space="preserve">
+        <value>Battery low</value>
+    </data>
+    <data name="Events.BatteryLow.Description" xml:space="preserve">
+        <value>A device dropped to the low-battery threshold while not charging.</value>
+    </data>
+    <data name="Events.Field.Device.Label" xml:space="preserve">
+        <value>Device</value>
+    </data>
+    <data name="Events.Field.Percent.Label" xml:space="preserve">
+        <value>Battery level</value>
+    </data>
+
+    <data name="Widgets.Panel.Name" xml:space="preserve">
+        <value>Battery panel</value>
+    </data>
+    <data name="Widgets.Panel.Description" xml:space="preserve">
+        <value>A list of your devices with level, charging state and time to full.</value>
+    </data>
+    <data name="Widgets.Tile.Name" xml:space="preserve">
+        <value>Battery tile</value>
+    </data>
+    <data name="Widgets.Tile.Description" xml:space="preserve">
+        <value>A single device's battery level on one key.</value>
+    </data>
+    <data name="Widgets.Empty" xml:space="preserve">
+        <value>No devices configured. Add one in the plugin settings.</value>
+    </data>
+    <data name="Widgets.TimeToFull" xml:space="preserve">
+        <value>{time} to full</value>
+    </data>
+    <data name="Widgets.Caption.Charging" xml:space="preserve">
+        <value>charging</value>
+    </data>
+    <data name="Widgets.Caption.ChargingEta" xml:space="preserve">
+        <value>{time} to full</value>
+    </data>
+    <data name="Widgets.Caption.Full" xml:space="preserve">
+        <value>full</value>
+    </data>
+    <data name="Widgets.Caption.NoSignal" xml:space="preserve">
+        <value>no signal</value>
+    </data>
+    <data name="Widgets.Config.Devices.Label" xml:space="preserve">
+        <value>Devices</value>
+    </data>
+    <data name="Widgets.Config.Title.Label" xml:space="preserve">
+        <value>Heading</value>
+    </data>
+    <data name="Widgets.Config.Title.Description" xml:space="preserve">
+        <value>Shown above the rows. Leave empty for no heading.</value>
+    </data>
+    <data name="Widgets.Config.Sort.Label" xml:space="preserve">
+        <value>Row order</value>
+    </data>
+    <data name="Widgets.Config.Sort.Manual" xml:space="preserve">
+        <value>As listed above</value>
+    </data>
+    <data name="Widgets.Config.Sort.LowestFirst" xml:space="preserve">
+        <value>Lowest battery first</value>
+    </data>
+    <data name="Widgets.Config.Sort.Alphabetical" xml:space="preserve">
+        <value>By name (A to Z)</value>
+    </data>
+    <data name="Widgets.Config.Sort.ChargingFirst" xml:space="preserve">
+        <value>Charging first</value>
+    </data>
+    <data name="Widgets.Config.ShowBar.Label" xml:space="preserve">
+        <value>Show level bar</value>
+    </data>
+    <data name="Widgets.Config.ShowPercent.Label" xml:space="preserve">
+        <value>Show percentage</value>
+    </data>
+    <data name="Widgets.Config.ShowCharging.Label" xml:space="preserve">
+        <value>Show charging indicator</value>
+    </data>
+    <data name="Widgets.Config.ShowTimeToFull.Label" xml:space="preserve">
+        <value>Show time to full</value>
+    </data>
+    <data name="Widgets.Config.ShowTrend.Label" xml:space="preserve">
+        <value>Show battery trend</value>
+    </data>
+    <data name="Widgets.Config.LowThreshold.Label" xml:space="preserve">
+        <value>Low battery threshold (%)</value>
+    </data>
+
+    <data name="ConfigFlow.Device.Title" xml:space="preserve">
+        <value>Add a battery device</value>
+    </data>
+    <data name="ConfigFlow.Device.EditTitle" xml:space="preserve">
+        <value>Edit {device}</value>
+    </data>
+    <data name="ConfigFlow.Device.Description" xml:space="preserve">
+        <value>Each device you add here appears in the widgets and as its own set of variables. Add one entry per device.</value>
+    </data>
+    <data name="ConfigFlow.Device.DetailsTitle" xml:space="preserve">
+        <value>{device} settings</value>
+    </data>
+    <data name="ConfigFlow.Device.DetailsDescription" xml:space="preserve">
+        <value>How to reach this device. Go back to change its name or type.</value>
+    </data>
+    <data name="ConfigFlow.Device.UnknownStep" xml:space="preserve">
+        <value>That step is not part of this flow.</value>
+    </data>
+    <data name="ConfigFlow.Device.FixFields" xml:space="preserve">
+        <value>Please correct the highlighted fields.</value>
+    </data>
+    <data name="ConfigFlow.Device.Name.Label" xml:space="preserve">
+        <value>Display name</value>
+    </data>
+    <data name="ConfigFlow.Device.Category.Label" xml:space="preserve">
+        <value>Device type</value>
+    </data>
+    <data name="ConfigFlow.Device.Category.AdbPhone" xml:space="preserve">
+        <value>Android phone (adb)</value>
+    </data>
+    <data name="ConfigFlow.Device.Category.Bluetooth" xml:space="preserve">
+        <value>Bluetooth device (Windows)</value>
+    </data>
+    <data name="ConfigFlow.Device.Category.System" xml:space="preserve">
+        <value>This PC</value>
+    </data>
+    <data name="ConfigFlow.Device.Category.Other" xml:space="preserve">
+        <value>Other devices</value>
+    </data>
+    <data name="ConfigFlow.Device.Other.Title" xml:space="preserve">
+        <value>Pick your device</value>
+    </data>
+    <data name="ConfigFlow.Device.Other.Description" xml:space="preserve">
+        <value>Choose the brand, then the model. Device not listed? See the link below for how to add it.</value>
+    </data>
+    <data name="ConfigFlow.Device.Other.Brand.Label" xml:space="preserve">
+        <value>Brand</value>
+    </data>
+    <data name="ConfigFlow.Device.Other.Model.Label" xml:space="preserve">
+        <value>Model</value>
+    </data>
+    <data name="ConfigFlow.Device.Other.Model.Invalid" xml:space="preserve">
+        <value>Pick a model for the selected brand.</value>
+    </data>
+    <data name="ConfigFlow.Device.Other.AddMissingLink" xml:space="preserve">
+        <value>How to add a device that is not listed</value>
+    </data>
+    <data name="ConfigFlow.Device.Brand.Razer" xml:space="preserve">
+        <value>Razer</value>
+    </data>
+    <data name="ConfigFlow.Device.Model.RazerDeathAdderV3Pro" xml:space="preserve">
+        <value>DeathAdder V3 Pro</value>
+    </data>
+    <data name="ConfigFlow.Device.AdbAddress.Label" xml:space="preserve">
+        <value>adb address (host:port)</value>
+    </data>
+    <data name="ConfigFlow.Device.AdbExecutable.Label" xml:space="preserve">
+        <value>adb executable</value>
+    </data>
+    <data name="ConfigFlow.Device.BluetoothName.Label" xml:space="preserve">
+        <value>Windows device name</value>
+    </data>
+    <data name="ConfigFlow.Device.BluetoothName.Description" xml:space="preserve">
+        <value>The device's name as Windows shows it, for example "CORSAIR HS80 MAX Hands-Free AG". Pick it from the list, or type it if it is not connected right now.</value>
+    </data>
+    <data name="ConfigFlow.Device.BluetoothKind.Label" xml:space="preserve">
+        <value>Kind</value>
+    </data>
+</root>
