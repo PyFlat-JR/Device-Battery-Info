@@ -20,7 +20,7 @@
   },
   "license": "MIT",
   "compatibility": {
-    "macroDeck": ">=3.0.0-beta.2"
+    "macroDeck": ">=3.0.0-beta.7"
   },
-  "repository": "https://github.com/PyFlat-JR/Device-Battery-Info"
+  "repository": "https://github.com/PyFlat/Device-Battery-Info"
 }
