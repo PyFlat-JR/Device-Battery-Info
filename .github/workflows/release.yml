@@ -94,3 +94,5 @@ jobs:
       source: src/DeviceBatteryInfo
       cli-version: 3.0.0-beta.11
       changelog: ${{ needs.release.outputs.changelog }}
+      # The release job above already ran the tests on windows-latest
+      run-tests: false
