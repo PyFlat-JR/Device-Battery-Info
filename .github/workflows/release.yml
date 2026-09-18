@@ -90,7 +90,6 @@ jobs:
       contents: read
       id-token: write
     with:
-      package-id: com.pyflat.device-battery-info
       version: ${{ needs.release.outputs.tag }}
       source: src/DeviceBatteryInfo
       cli-version: 3.0.0-beta.11
