@@ -2,6 +2,8 @@
 
     <PropertyGroup>
         <OutputType>Exe</OutputType>
+        <AssemblyName>DeviceBatteryInfo</AssemblyName>
+        <RootNamespace>DeviceBatteryInfo</RootNamespace>
         <IsPackable>false</IsPackable>
         <UserSecretsId>DeviceBatteryInfo-PluginDevelopment</UserSecretsId>
     </PropertyGroup>

@@ -198,7 +198,10 @@ one change:
 1. `manifest.json` - `id` (reverse-domain, lowercase, at least two dot-joined kebab segments, e.g.
    `com.example.my-plugin`), `name`, `version`, `description`, `publisher.name`, and `entrypoints` plus
    the matching `macrodeck-build.json` targets for the platforms you actually ship.
-2. Rename the project, the test project, the solution file and the namespace.
+2. Rename the project, the test project, the solution file and the namespace. The project's
+   `AssemblyName` and `RootNamespace` are pinned: the first names the executable, so change it together
+   with the `entrypoints` paths - never one without the other, or `macrodeck-plugin build` fails with
+   `entrypoint-missing`; the second is where the generated `Strings` class lives.
 3. Replace `Assets/icon.svg`. The manifest's `icon` path is the single source of truth and the host
    reads that file directly - there is no icon code to change.
 4. Replace `LogMessageAction` with the plugin's real first action, and its keys in
@@ -207,6 +210,57 @@ one change:
 `MacroDeck.Plugin.Analyzers` is already referenced with `PrivateAssets="all"` - 13 compile-time
 diagnostics that catch most of the mistakes below while you type, plus the `[MacroDeckSdkUsage]`
 attribute the host reads to report real deprecation usage instead of inferring it. Keep it.
+
+## Store gate
+
+This plugin is published through the Macro Deck Store, and the Creator Portal refuses a build that
+breaks its policy. The policy changes over time, so never rely on a copy, on memory or on an earlier
+fetch in the same session. **Fetch every document below again before you start a change and again before
+you call it done.** If one cannot be fetched, say so and stop rather than assuming it still says what it
+said last time.
+
+| What | Where |
+| --- | --- |
+| Creator Guidelines (Markdown) | <https://api.macro-deck.app/api/v1/public/creator-guidelines> |
+| Blocked packages (JSON) | <https://api.macro-deck.app/api/v1/public/dependency-policy/blocked-packages> |
+| Minimum SDK version and allowed Macro Deck packages (JSON) | <https://api.macro-deck.app/api/v1/public/dependency-policy/sdk> |
+
+A change is not done until all six hold:
+
+1. **The plugin follows the Creator Guidelines.** Read the whole document, not just the part that seems
+   relevant, and check the change against every rule in it. Where a rule here and the guidelines
+   disagree, the guidelines win. Point out the conflict so this file can be corrected.
+2. **No blocked package is used.** Check every entry in `blockedPackages` against the full dependency
+   graph (`dotnet list package --include-transitive`), not only the packages referenced directly (this
+   includes `HidSharp`). An entry matches by `packagePattern`. A `versionPattern` of `null` blocks every
+   version. Otherwise only the matching versions are blocked. `reason` says why. Replace the package or
+   restructure the code that needs it. Never work around a block by vendoring, renaming or loading the
+   package some other way.
+3. **The Macro Deck SDK is at least `minimumSdkVersion`.** The Macro Deck packages float to the newest
+   published version by default, so this usually holds on its own. It stops holding when
+   `MacroDeckSdkVersion` is pinned (as it currently is, in `Directory.Packages.props`), or when a build
+   runs against `local-feed/`. A release must never be built against an SDK older than the minimum.
+4. **Only allowed Macro Deck packages are used.** Every package in the graph whose id starts with
+   `MacroDeck.` must match an entry in `allowedMacroDeckPackages`. Anything else under that prefix is
+   refused on upload, including packages from another Macro Deck repository that were never published
+   for plugins.
+5. **The manifest names its author, licence and repository.** `publisher.name` in `manifest.json` must
+   be the owner the plugin is published under in the Creator Portal: the Organization's name, or for a
+   personal Project the creator's username (compared ignoring case). The Store always shows that owner,
+   and an upload whose manifest names anyone else is refused. `license` must be set, at most 64
+   characters, as an SPDX identifier such as `MIT`; the Store shows it as the plugin's licence.
+   `repository` must be the GitHub repository the plugin is built and released from, written
+   `https://github.com/<owner>/<name>`; an upload from any other repository is refused.
+6. **The plugin passes the conformance suite on every platform it declares.** The Store refuses a build
+   that does not come with a conformance report for each platform in `entrypoints`, or whose report shows
+   a failed Required check, never reached the plugin (`MDC0201`, the handshake, did not pass), or is for
+   another plugin id or version. The official publishing workflow runs the suite on a stub host per
+   platform and sends the reports, so never turn its `run-stub-host` off. Before calling a change done,
+   run `macrodeck-plugin test` (see "Verifying a change") and fix every Required failure; a failed
+   Recommended check is allowed but worth fixing.
+
+Report the result of this gate with every change: which version of the guidelines was checked (the
+`X-Creator-Guidelines-Version` response header), and whether each of the six points holds.
 
 ## The rules that make a plugin clean
 
@@ -472,6 +526,15 @@ macrodeck-plugin inspect --artifact ./artifacts/<id>-<version>.macroDeckPlugin
 A `dotnet build -c Release` output is *not* packable: the manifest points at `runtimes/<rid>/`, which
 only `build` assembles, so `validate`/`pack` against `bin/Release/net10.0` fails on a missing entrypoint.
 Adding a platform means adding it to `entrypoints` **and** `macrodeck-build.json`.
+
+This plugin is **framework-dependent**: `entrypoints.win-x64` names `runtimes/win-x64/DeviceBatteryInfo.dll`
+with `"runtime": { "kind": "FrameworkDependent", "dotnetVersion": "10.0" }`, and `macrodeck-build.json`
+publishes with `--self-contained false -p:UseAppHost=false`. Macro Deck ships a .NET 10 runtime (ASP.NET
+Core included) with the host and runs the plugin on it, which is also why it appears as `dotnet` in
+process lists. Self-contained is the other pairing, for a runtime Macro Deck does not ship: drop the
+`runtime` block, point `executable` at the apphost (no `.dll`; `.exe` on Windows) and publish with
+`--self-contained true` (no `-p:UseAppHost=false`). Keep the manifest and `macrodeck-build.json` on the
+same pairing; mixing them fails validation.
 
 Packing validates first, recomputes every `files[]` digest from disk and fills in `languages` from
 `Localization/`, discarding whatever the source manifest declared - so never hand-maintain either.
