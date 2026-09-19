@@ -132,6 +132,35 @@ Design knowledge that is not obvious from the code alone:
   text when there is no time-to-full to show (most sources never report one), and both the `trend`
   and `trend-rate` variable suffixes are public API like every other field suffix in
   `BatteryVariableCatalog`.
+- **Bluetooth battery data lives on a different PnP node than the one the user picks, and is only
+  cached opportunistically.** `PowerShellPnpBatteryReader` reads `DEVPKEY_Bluetooth_Battery` from
+  Windows' own PnP device tree. Every physical device shows up as many PnP nodes sharing one 6-byte
+  Bluetooth address (`BTHENUM\DEV_<mac>\...` is the single root node whose `FriendlyName` matches what
+  Windows Settings/Device Manager show; everything else is a sibling SDP/profile node, e.g. the
+  `{0000111E-...}` Hands-Free Audio Gateway node, named `"<device> Hands-Free AG"`). The battery
+  property is never set on the root node - only on whichever sibling node Windows' Bluetooth stack has
+  actually queried it through (commonly HFP), and plenty of present, working devices never get one at
+  all, because nothing ever triggered that query. So `ListDevicesAsync` (the config-flow picker) must
+  never filter on "has a cached value right now" - only on whether the device could ever get one at
+  all: a sibling node advertising SDP class `0000111E` (Hands-Free) is that capability signal, confirmed
+  against real hardware (a pure A2DP speaker with no microphone never has that node and never gets a
+  reading; a device that has the node but no value yet still belongs in the list). List every present
+  root node (`^(BTHENUM|BTHLE)\DEV_`) that clears that bar, by name, and let `ReadRawAsync` (and its
+  `Unavailable` fallback, already handled) deal with "no value yet". `ReadRawAsync` cannot resolve by
+  `FriendlyName` alone either: given the picked root name, it has to find the Bluetooth address embedded
+  in that node's `InstanceId` and then search every present node sharing that address for whichever one
+  currently carries the property. Extracting that address is not a bare 12-hex-digit regex - every
+  classic SDP node's GUID ends in the constant Bluetooth Base UUID (`...-8000-00805F9B34FB`), itself 12
+  hex digits, and matches indiscriminately across every other paired device's nodes too if not excluded.
+  The real address only ever appears immediately after `DEV_` or `&0&` (the radio-address separator
+  every child node's `InstanceId` has), so the extraction regex must anchor on one of those two
+  prefixes. Batching the battery-property lookup (`Get-PnpDeviceProperty -InstanceId <array>`) across
+  every present PnP device on the system silently returns nothing at all, confirmed directly - scope it
+  to the Bluetooth enumerators first, same as everything else here. Both scripts are C# 11 raw
+  interpolated string literals (`$$"""..."""`): a plain `{` or `}` is literal PowerShell (script blocks,
+  hashtables), only `{{...}}` interpolates a C# value, which is what makes it readable as actual
+  multi-line PowerShell with real variable names instead of an escaped, concatenated one-liner. Keep
+  writing new embedded PowerShell here the same way.
 - **Razer is split into shared utilities and one device-specific backend.**
   `Sources/Razer/` holds only what any Razer HID device would need - `NativeRazerHid` (the raw
   `hid.dll` feature-report interop), and `IRazerHidTransport`/`HidSharpRazerTransport` (enumeration

@@ -87,9 +87,9 @@ public sealed class CatalogNotificationTests
 
     private sealed class NoDiscovery : IDeviceDiscovery
     {
-        public Task<IReadOnlyList<string>> ListBluetoothDeviceNamesAsync(
+        public Task<IReadOnlyList<BluetoothDeviceCandidate>> ListBluetoothDevicesAsync(
             CancellationToken cancellationToken
-        ) => Task.FromResult<IReadOnlyList<string>>([]);
+        ) => Task.FromResult<IReadOnlyList<BluetoothDeviceCandidate>>([]);
 
         public Task<IReadOnlyList<DiscoveredHidDevice>> ListHidDevicesAsync(
             CancellationToken cancellationToken

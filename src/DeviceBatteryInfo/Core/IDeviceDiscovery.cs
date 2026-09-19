@@ -2,7 +2,9 @@ namespace DeviceBatteryInfo.Core;
 
 public interface IDeviceDiscovery
 {
-    Task<IReadOnlyList<string>> ListBluetoothDeviceNamesAsync(CancellationToken cancellationToken);
+    Task<IReadOnlyList<BluetoothDeviceCandidate>> ListBluetoothDevicesAsync(
+        CancellationToken cancellationToken
+    );
 
     // Not used by any picker today; kept for a future "scan for supported devices" step.
     Task<IReadOnlyList<DiscoveredHidDevice>> ListHidDevicesAsync(
@@ -16,3 +18,5 @@ public sealed record DiscoveredHidDevice(
     int? InterfaceNumber,
     string ProductName
 );
+
+public sealed record BluetoothDeviceCandidate(string Name, int? Percent);

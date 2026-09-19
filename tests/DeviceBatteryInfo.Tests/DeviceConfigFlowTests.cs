@@ -16,11 +16,11 @@ public sealed class DeviceConfigFlowTests
     }
 
     private sealed class FakeDiscovery(
-        IReadOnlyList<string>? bluetooth = null,
+        IReadOnlyList<BluetoothDeviceCandidate>? bluetooth = null,
         IReadOnlyList<DiscoveredHidDevice>? hid = null
     ) : IDeviceDiscovery
     {
-        public Task<IReadOnlyList<string>> ListBluetoothDeviceNamesAsync(
+        public Task<IReadOnlyList<BluetoothDeviceCandidate>> ListBluetoothDevicesAsync(
             CancellationToken cancellationToken
         ) => Task.FromResult(bluetooth ?? []);
 

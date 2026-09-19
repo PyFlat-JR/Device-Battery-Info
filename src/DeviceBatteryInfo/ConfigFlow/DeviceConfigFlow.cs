@@ -170,8 +170,7 @@ internal sealed class DeviceConfigFlow(
                 );
                 break;
 
-            case DeviceType.Bluetooth
-                when Draft(DeviceConfigKeys.BluetoothName) is not { Length: > 0 }:
+            case DeviceType.Bluetooth when ResolvedBluetoothName() is not { Length: > 0 }:
                 errors[DeviceConfigKeys.BluetoothName] = MacroDeckStrings.Validation.Required(
                     Strings.ConfigFlow.Device.BluetoothName.Label()
                 );
@@ -210,7 +209,7 @@ internal sealed class DeviceConfigFlow(
 
             case DeviceType.Bluetooth:
                 values[DeviceConfigKeys.BluetoothName] = ConfigFlowValue.Plain(
-                    Draft(DeviceConfigKeys.BluetoothName)
+                    ResolvedBluetoothName()
                 );
                 values[DeviceConfigKeys.BluetoothKind] = ConfigFlowValue.Plain(
                     Draft(DeviceConfigKeys.BluetoothKind) ?? "headset"
@@ -286,9 +285,7 @@ internal sealed class DeviceConfigFlow(
 
     private ConfigFlowStep BuildOtherStep(BatterySlot? editing)
     {
-        var editingEntry = editing is null
-            ? null
-            : DeviceModelCatalog.ForBackendType(editing.Type);
+        var editingEntry = editing is null ? null : DeviceModelCatalog.ForBackendType(editing.Type);
         var brands = DeviceModelCatalog.Brands;
         var selectedBrand =
             Draft(DeviceConfigKeys.CatalogBrand) ?? editingEntry?.BrandId ?? brands[0].Id;
@@ -383,11 +380,17 @@ internal sealed class DeviceConfigFlow(
 
             case DeviceType.Bluetooth:
             {
-                var bluetoothNames = await ListBluetoothNamesAsync(cancellationToken);
-                var options = bluetoothNames
-                    .Select(n => new ActionParameterOption { Value = n, Label = n })
-                    .ToArray();
+                var bluetoothDevices = await ListBluetoothDevicesAsync(cancellationToken);
+                var options = bluetoothDevices.Select(BluetoothNameOption).ToArray();
                 fields.Add(BluetoothNameField(options));
+                if (
+                    options.Length > 0
+                    && Draft(DeviceConfigKeys.BluetoothName) is not { Length: > 0 }
+                )
+                {
+                    advanced.Add(BluetoothNameCustomField());
+                }
+
                 fields.Add(
                     ActionParameter.Choice(
                         DeviceConfigKeys.BluetoothKind,
@@ -414,6 +417,29 @@ internal sealed class DeviceConfigFlow(
         };
     }
 
+    private static ActionParameterOption BluetoothNameOption(BluetoothDeviceCandidate device) =>
+        new()
+        {
+            Value = device.Name,
+            Label = device.Percent is { } percent
+                ? Strings.ConfigFlow.Device.BluetoothName.OptionWithBattery(
+                    device.Name,
+                    $"{percent}%"
+                )
+                : Strings.ConfigFlow.Device.BluetoothName.OptionWithoutBattery(device.Name),
+        };
+
+    private ActionParameter BluetoothNameCustomField() =>
+        ActionParameter.Text(
+            DeviceConfigKeys.BluetoothNameCustom,
+            label: Strings.ConfigFlow.Device.BluetoothNameCustom.Label(),
+            description: Strings.ConfigFlow.Device.BluetoothNameCustom.Description(),
+            defaultValue: Draft(DeviceConfigKeys.BluetoothNameCustom)
+        );
+
+    private string? ResolvedBluetoothName() =>
+        Draft(DeviceConfigKeys.BluetoothNameCustom) ?? Draft(DeviceConfigKeys.BluetoothName);
+
     private ActionParameter BluetoothNameField(ActionParameterOption[] options)
     {
         var current = Draft(DeviceConfigKeys.BluetoothName);
@@ -428,11 +454,13 @@ internal sealed class DeviceConfigFlow(
             );
         }
 
-        return ActionParameter.Autocomplete(
+        return ActionParameter.Choice(
             DeviceConfigKeys.BluetoothName,
+            options,
             label: Strings.ConfigFlow.Device.BluetoothName.Label(),
-            description: Strings.ConfigFlow.Device.BluetoothName.Description(),
-            options: options
+            description: Strings.ConfigFlow.Device.BluetoothName.ListDescription(),
+            defaultValue: options[0].Value,
+            required: true
         );
     }
 
@@ -493,7 +521,7 @@ internal sealed class DeviceConfigFlow(
             : DeviceConfigKeys.CategoryToType(Draft(DeviceConfigKeys.Category))
                 ?? DeviceType.AdbPhone;
 
-    private async Task<IReadOnlyList<string>> ListBluetoothNamesAsync(
+    private async Task<IReadOnlyList<BluetoothDeviceCandidate>> ListBluetoothDevicesAsync(
         CancellationToken cancellationToken
     )
     {
@@ -501,8 +529,8 @@ internal sealed class DeviceConfigFlow(
         cts.CancelAfter(DiscoveryBudget);
 
         var work = Guard(
-            () => discovery.ListBluetoothDeviceNamesAsync(cts.Token),
-            Array.Empty<string>()
+            () => discovery.ListBluetoothDevicesAsync(cts.Token),
+            Array.Empty<BluetoothDeviceCandidate>()
         );
         var deadline = Task.Delay(
             DiscoveryBudget + TimeSpan.FromMilliseconds(500),

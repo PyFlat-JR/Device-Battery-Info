@@ -22,9 +22,10 @@ public sealed class DeviceDiscoveryHardwareTests
         );
 
         var sw = System.Diagnostics.Stopwatch.StartNew();
-        var bt = await discovery.ListBluetoothDeviceNamesAsync(CancellationToken.None);
+        var bt = await discovery.ListBluetoothDevicesAsync(CancellationToken.None);
         TestContext.Out.WriteLine(
-            $"bluetooth ({sw.ElapsedMilliseconds} ms): {string.Join(" | ", bt)}"
+            $"bluetooth ({sw.ElapsedMilliseconds} ms): "
+                + string.Join(" | ", bt.Select(d => $"{d.Name} ({(d.Percent is { } p ? $"{p}%" : "?")})"))
         );
 
         sw.Restart();

@@ -9,9 +9,18 @@ internal sealed class WindowsDeviceDiscovery(
     IPnpBatteryReader pnpReader
 ) : IDeviceDiscovery
 {
-    public Task<IReadOnlyList<string>> ListBluetoothDeviceNamesAsync(
+    public async Task<IReadOnlyList<BluetoothDeviceCandidate>> ListBluetoothDevicesAsync(
         CancellationToken cancellationToken
-    ) => pnpReader.ListDevicesWithBatteryAsync(cancellationToken);
+    )
+    {
+        var devices = await pnpReader.ListDevicesAsync(cancellationToken);
+        return devices
+            .Select(d => new BluetoothDeviceCandidate(
+                d.Name,
+                BluetoothBatteryParser.ParsePercent(d.RawBattery)
+            ))
+            .ToArray();
+    }
 
     public Task<IReadOnlyList<DiscoveredHidDevice>> ListHidDevicesAsync(
         CancellationToken cancellationToken

@@ -15,6 +15,7 @@ internal static class DeviceConfigKeys
     public const string AdbAddress = "adbAddress";
     public const string AdbExecutable = "adbExecutable";
     public const string BluetoothName = "bluetoothName";
+    public const string BluetoothNameCustom = "bluetoothNameCustom";
     public const string BluetoothKind = "bluetoothKind";
 
     public const string VendorId = "vendorId";
